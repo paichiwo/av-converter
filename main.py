@@ -20,6 +20,8 @@ class Converter(CTk):
         center_window(self, 640, 480)
         self.minsize(640, 480)
 
+        self.files_to_convert = []
+
         # GUI
         self.top_frame = CTkFrame(self, fg_color='transparent')
         self.mid_frame = CTkFrame(self, corner_radius=30)
@@ -98,6 +100,20 @@ class Converter(CTk):
         if event.data and (event.widget in (self.mid_frame, self.filelist, self.plus_lbl)):
             print(event.data)
             self.plus_lbl.destroy()
+            files = self.filelist.tk.splitlist(event.data)
+            self.get_filelist(files, self.files_to_convert)
+            print(self.files_to_convert)
+
+    def get_filelist(self, input_array, output_array):
+        for file in input_array:
+            if file.endswith(tuple(OUTPUT_FORMATS)):
+                output_array.append(file)
+                self.filelist.insert('end', file.split('/')[-1])
+                self.info_lbl.configure(text='')
+            else:
+                self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
+                self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
+                self.info_lbl.configure(text='This format is not allowed')
 
     def settings_btn_action(self):
         print('settings button clicked')
