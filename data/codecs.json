@@ -1,0 +1,23 @@
+{
+    ".aac": "libfdk_aac",
+    ".avi": "mpeg4",
+    ".flac": "flac",
+    ".flv": "flv",
+    ".m4p": "libfdk_aac",
+    ".m4v": "h264",
+    ".mov": "h264",
+    ".mp2": "mp2",
+    ".mp3": "libmp3lame",
+    ".mp4": "h264",
+    ".mpe": "mpeg2video",
+    ".mpeg": "mpeg1video",
+    ".mpg": "mpeg1video",
+    ".mpv": "h264",
+    ".ogg": "libvorbis",
+    ".qt": "h264",
+    ".swf": "flv",
+    ".wav": "pcm_s16le",
+    ".webm": "vp9",
+    ".wmv": "wmv2",
+    ".m4a": "libfdk_aac"
+}
