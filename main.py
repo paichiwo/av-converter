@@ -3,11 +3,11 @@ import threading
 from subprocess import PIPE, CompletedProcess, Popen
 from tkinterdnd2 import *
 from tkinter import filedialog
-from customtkinter import CTk, CTkFrame, CTkLabel, CTkOptionMenu, CTkButton, StringVar, DoubleVar
+from customtkinter import CTk, CTkFrame, CTkLabel, CTkOptionMenu, CTkButton, CTkProgressBar, StringVar, DoubleVar
 from CTkMessagebox import ctkmessagebox
 from CTkListbox import CTkListbox
 from src.CTkScrollableDropdown import *
-from src.config import IMG_PATHS, VERSION
+from src.config import IMG_PATHS, VERSION, OUTPUT_FORMATS
 from src.helpers import center_window, imager
 
 
@@ -24,22 +24,27 @@ class Converter(CTk):
         self.top_frame = CTkFrame(self, fg_color='transparent')
         self.mid_frame = CTkFrame(self, corner_radius=30)
         self.btm_frame = CTkFrame(self, fg_color='transparent')
+        self.prg_frame = CTkFrame(self)
         self.nfo_frame = CTkFrame(self, corner_radius=0)
 
         # TOP FRAME
         self.settings_btn = CTkButton(self.top_frame, image=imager(IMG_PATHS['settings'], 20, 20),
                                       text='', width=40, fg_color='transparent', command=self.settings_btn_action)
         # MID FRAME
-        self.filelist = CTkListbox(self.mid_frame, border_width=0, corner_radius=10)
+        self.filelist = CTkListbox(self.mid_frame, border_width=0, corner_radius=10, scrollbar_button_color='grey17')
 
         # BTM FRAME
         self.dropdown_menu = CTkOptionMenu(self.btm_frame)
-        self.dropdown_menu.set('choose format')
-        CTkScrollableDropdown(self.dropdown_menu, values=['one', 'two'], frame_border_width=1)
+        self.dropdown_menu.set('.mp3')
+        CTkScrollableDropdown(self.dropdown_menu, values=sorted(OUTPUT_FORMATS), frame_border_width=1)
 
         self.browse_btn = CTkButton(self.btm_frame, text='BROWSE')
         self.clear_btn = CTkButton(self.btm_frame, text='CLEAR')
         self.convert_btn = CTkButton(self.btm_frame, text='CONVERT')
+
+        # PRG FRAME
+        self.progress_bar = CTkProgressBar(self.prg_frame, height=2)
+        self.progress_bar.set(0)
 
         # NFO FRAME
         self.info_lbl = CTkLabel(self.nfo_frame, text='initial test')
@@ -58,6 +63,7 @@ class Converter(CTk):
         self.btm_frame.pack(fill='x', padx=40, pady=(0, 20))
         self.btm_frame.rowconfigure(0, weight=10)
         self.btm_frame.rowconfigure(1, weight=10)
+        self.btm_frame.rowconfigure(2, weight=10)
         self.btm_frame.columnconfigure(0, weight=10)
         self.btm_frame.columnconfigure(1, weight=10)
         self.btm_frame.columnconfigure(2, weight=10)
@@ -65,6 +71,9 @@ class Converter(CTk):
         self.browse_btn.grid(row=1, column=0, sticky='w')
         self.clear_btn.grid(row=1, column=1)
         self.convert_btn.grid(row=1, column=2, sticky='e')
+
+        self.prg_frame.pack(fill='x')
+        self.progress_bar.pack(fill='x')
 
         self.nfo_frame.pack(fill='x')
         self.info_lbl.pack(fill='x', padx=10, side='left')
