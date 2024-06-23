@@ -41,9 +41,9 @@ class Converter(CTk):
         self.dropdown_menu.set('.mp3')
         CTkScrollableDropdown(self.dropdown_menu, values=sorted(OUTPUT_FORMATS), frame_border_width=1)
 
-        self.browse_btn = CTkButton(self.btm_frame, text='BROWSE')
-        self.clear_btn = CTkButton(self.btm_frame, text='CLEAR')
-        self.convert_btn = CTkButton(self.btm_frame, text='CONVERT')
+        self.browse_btn = CTkButton(self.btm_frame, text='BROWSE', command=self.browse_btn_action)
+        self.clear_btn = CTkButton(self.btm_frame, text='CLEAR', command=self.clear_btn_action)
+        self.convert_btn = CTkButton(self.btm_frame, text='CONVERT', command=self.convert_btn_action)
 
         # PRG FRAME
         self.progress_bar = CTkProgressBar(self.prg_frame, height=2)
@@ -98,11 +98,9 @@ class Converter(CTk):
 
     def drop_action(self, event):
         if event.data and (event.widget in (self.mid_frame, self.filelist, self.plus_lbl)):
-            print(event.data)
             self.plus_lbl.destroy()
             files = self.filelist.tk.splitlist(event.data)
             self.get_filelist(files, self.files_to_convert)
-            print(self.files_to_convert)
 
     def get_filelist(self, input_array, output_array):
         for file in input_array:
@@ -117,6 +115,20 @@ class Converter(CTk):
 
     def settings_btn_action(self):
         print('settings button clicked')
+
+    def browse_btn_action(self):
+        files = filedialog.askopenfilenames()
+        if files:
+            self.plus_lbl.destroy()
+            print(files)
+
+    def clear_btn_action(self):
+        self.files_to_convert.clear()
+        self.filelist.delete(0, 'end')
+
+    def convert_btn_action(self):
+        print(self.dropdown_menu.get())
+
 
 
 if __name__ == '__main__':
