@@ -31,7 +31,8 @@ class Converter(CTk):
         self.settings_btn = CTkButton(self.top_frame, image=imager(IMG_PATHS['settings'], 20, 20),
                                       text='', width=40, fg_color='transparent', command=self.settings_btn_action)
         # MID FRAME
-        self.filelist = CTkListbox(self.mid_frame, border_width=0, corner_radius=10, scrollbar_button_color='grey17')
+        self.filelist = CTkListbox(self.mid_frame, border_width=0, corner_radius=10, scrollbar_button_color='grey17',
+                                   scrollbar_button_hover_color='grey17')
 
         # BTM FRAME
         self.dropdown_menu = CTkOptionMenu(self.btm_frame)
@@ -49,6 +50,10 @@ class Converter(CTk):
         # NFO FRAME
         self.info_lbl = CTkLabel(self.nfo_frame, text='initial test')
 
+        # PLUS LABEL
+        self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
+
+        self.enable_drag_and_drop()
         self.draw_gui()
 
     def draw_gui(self):
@@ -78,9 +83,24 @@ class Converter(CTk):
         self.nfo_frame.pack(fill='x')
         self.info_lbl.pack(fill='x', padx=10, side='left')
 
+        self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
+
+    def enable_drag_and_drop(self):
+        self.mid_frame.drop_target_register(DND_FILES)
+        self.filelist.drop_target_register(DND_FILES)
+        self.plus_lbl.drop_target_register(DND_FILES)
+
+        self.mid_frame.dnd_bind('<<Drop>>', self.drop_action)
+        self.filelist.dnd_bind('<<Drop>>', self.drop_action)
+        self.plus_lbl.dnd_bind('<<Drop>>', self.drop_action)
+
+    def drop_action(self, event):
+        if event.data and (event.widget in (self.mid_frame, self.filelist, self.plus_lbl)):
+            print(event.data)
+            self.plus_lbl.destroy()
+
     def settings_btn_action(self):
         print('settings button clicked')
-
 
 
 if __name__ == '__main__':
