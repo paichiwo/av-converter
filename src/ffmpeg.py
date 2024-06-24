@@ -16,7 +16,7 @@ class FFMpeg:
 
         self.unzip_ffmpeg()
 
-    def popup_window(self):
+    def error_popup(self):
         self.error_window = CTkMessagebox(title='ERROR', message='ffmpeg.zip not found, Quitting...',
                                           icon='warning', option_1='OK')
 
@@ -32,8 +32,9 @@ class FFMpeg:
 
             with ZipFile(resource_path('./ffmpeg/ffmpeg.zip'), 'r') as zip_ref:
                 zip_ref.extract('ffmpeg.exe', self.dir_path)
+
         except FileNotFoundError:
-            self.popup_window()
+            self.error_popup()
 
     def use_ffmpeg(self, input_file_path, output_file_path, video_codec, progress_callback=None):
         """Use ffmpeg for conversion"""

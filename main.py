@@ -97,8 +97,7 @@ class Converter(CTk):
     def drop_action(self, event):
         if event.data and (event.widget in (self.mid_frame, self.filelist, self.plus_lbl)):
             self.plus_lbl.destroy()
-            files = self.filelist.tk.splitlist(event.data)
-            self.get_filelist(files, self.files_to_convert)
+            self.get_filelist(input_array=self.filelist.tk.splitlist(event.data), output_array=self.files_to_convert)
 
     def get_filelist(self, input_array, output_array):
         for file in input_array:
