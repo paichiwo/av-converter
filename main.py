@@ -53,12 +53,10 @@ class Converter(CTk):
         # PLUS LABEL
         self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
 
-        # ERROR POPUP WINDOW
         # initialize
+        self.ffmpeg = FFMpeg(self)
         self.enable_drag_and_drop()
         self.draw_gui()
-
-        self.ffmpeg = FFMpeg(self)
 
     def draw_gui(self):
         self.top_frame.pack(fill='x', padx=40)

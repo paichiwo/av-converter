@@ -11,9 +11,9 @@ class FFMpeg:
     def __init__(self, main_window):
         self.dir_path = path.join(environ['LOCALAPPDATA'], 'AV-Converter')
         self.exe_path = path.join(self.dir_path, 'ffmpeg.exe')
-
         self.error_window = None
         self.main_window = main_window
+
         self.unzip_ffmpeg()
 
     def popup_window(self):
@@ -38,9 +38,9 @@ class FFMpeg:
 
     def use_ffmpeg(self, input_file_path, output_file_path, video_codec, progress_callback=None):
         """Use ffmpeg for conversion"""
-
         ffmpeg_command = [self.exe_path, '-i', input_file_path, '-c:v', video_codec, '-y', output_file_path]
-        process = Popen(ffmpeg_command, stdout=PIPE, stderr=PIPE, stdin=PIPE,
+
+        process = Popen(args=ffmpeg_command, stdout=PIPE, stderr=PIPE, stdin=PIPE,
                         creationflags=CREATE_NO_WINDOW, universal_newlines=True)
 
         duration = self.extract_duration(process.stderr)
