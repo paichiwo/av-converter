@@ -19,11 +19,10 @@ class FFMpeg:
     def popup_window(self):
         self.error_window = CTkMessagebox(title='ERROR', message='ffmpeg.zip not found, Quitting...',
                                           icon='warning', option_1='OK')
-        response = self.error_window.get()
 
+        response = self.error_window.get()
         if response == 'OK' and self.main_window:
-            self.error_window.after(3000, self.error_window.destroy)
-            self.main_window.after(4000, self.main_window.destroy)
+            self.main_window.after(100, self.main_window.destroy)
 
     def unzip_ffmpeg(self):
         """Unzip ffmpeg file"""
