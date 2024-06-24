@@ -1,14 +1,12 @@
-import os
-import threading
-from subprocess import PIPE, CompletedProcess, Popen
 from tkinterdnd2 import *
 from tkinter import filedialog
 from customtkinter import CTk, CTkFrame, CTkLabel, CTkOptionMenu, CTkButton, CTkProgressBar, StringVar, DoubleVar
-from CTkMessagebox import ctkmessagebox
+from CTkMessagebox import CTkMessagebox
 from CTkListbox import CTkListbox
 from src.CTkScrollableDropdown import *
 from src.config import IMG_PATHS, VERSION, OUTPUT_FORMATS
 from src.helpers import center_window, imager
+from src.ffmpeg import FFMpeg
 
 
 class Converter(CTk):
@@ -55,8 +53,12 @@ class Converter(CTk):
         # PLUS LABEL
         self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
 
+        # ERROR POPUP WINDOW
+        # initialize
         self.enable_drag_and_drop()
         self.draw_gui()
+
+        self.ffmpeg = FFMpeg(self)
 
     def draw_gui(self):
         self.top_frame.pack(fill='x', padx=40)
@@ -88,13 +90,11 @@ class Converter(CTk):
         self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
 
     def enable_drag_and_drop(self):
-        self.mid_frame.drop_target_register(DND_FILES)
-        self.filelist.drop_target_register(DND_FILES)
-        self.plus_lbl.drop_target_register(DND_FILES)
+        widgets = [self.mid_frame, self.filelist, self.plus_lbl]
 
-        self.mid_frame.dnd_bind('<<Drop>>', self.drop_action)
-        self.filelist.dnd_bind('<<Drop>>', self.drop_action)
-        self.plus_lbl.dnd_bind('<<Drop>>', self.drop_action)
+        for widget in widgets:
+            widget.drop_target_register(DND_FILES)
+            widget.dnd_bind('<<Drop>>', self.drop_action)
 
     def drop_action(self, event):
         if event.data and (event.widget in (self.mid_frame, self.filelist, self.plus_lbl)):
@@ -128,7 +128,6 @@ class Converter(CTk):
 
     def convert_btn_action(self):
         print(self.dropdown_menu.get())
-
 
 
 if __name__ == '__main__':
