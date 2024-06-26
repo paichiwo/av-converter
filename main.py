@@ -1,3 +1,5 @@
+import os.path
+import threading
 from tkinterdnd2 import *
 from tkinter import filedialog
 from customtkinter import CTk, CTkFrame, CTkLabel, CTkOptionMenu, CTkButton, CTkProgressBar, StringVar, DoubleVar
@@ -5,7 +7,7 @@ from CTkMessagebox import CTkMessagebox
 from CTkListbox import CTkListbox
 from src.CTkScrollableDropdown import *
 from src.config import IMG_PATHS, VERSION, OUTPUT_FORMATS
-from src.helpers import center_window, imager
+from src.helpers import center_window, imager, load_codecs_from_json
 from src.ffmpeg import FFMpeg
 
 
@@ -19,6 +21,7 @@ class Converter(CTk):
         self.minsize(640, 480)
 
         self.files_to_convert = []
+        self.codecs = load_codecs_from_json()
 
         # GUI
         self.top_frame = CTkFrame(self, fg_color='transparent')
@@ -61,7 +64,7 @@ class Converter(CTk):
     def draw_gui(self):
         self.top_frame.pack(fill='x', padx=40)
         self.top_frame.columnconfigure(0, weight=10)
-        self.settings_btn.grid(row=0, column=2, sticky='e', padx=(0, 10), pady=(10, 0))
+        self.settings_btn.grid(row=0, column=2, sticky='e', pady=(10, 0))
 
         self.mid_frame.pack(fill='both', expand=True, padx=40, pady=10)
         self.mid_frame.columnconfigure(0, weight=1)
@@ -117,15 +120,31 @@ class Converter(CTk):
         files = filedialog.askopenfilenames()
         if files:
             self.plus_lbl.destroy()
-            print(files)
+            self.get_filelist(input_array=self.filelist.tk.splitlist(files), output_array=self.files_to_convert)
 
     def clear_btn_action(self):
         self.files_to_convert.clear()
         self.filelist.delete(0, 'end')
 
     def convert_btn_action(self):
-        print(self.dropdown_menu.get())
+        def progress_call(percentage):
+            self.progress_bar.set(percentage/100)
 
+        def convert():
+            self.progress_bar.set(0)
+            extension = self.dropdown_menu.get()
+            for input_file in self.files_to_convert:
+                name, ext = os.path.splitext(input_file)
+
+                output_file = name + extension
+                codec = self.codecs[extension]
+
+                try:
+                    self.ffmpeg.use_ffmpeg(input_file, output_file, codec, progress_call)
+                except FileNotFoundError:
+                    self.info_lbl.configure(text='No ffmpeg.exe found')
+
+        threading.Thread(target=convert).start()
 
 if __name__ == '__main__':
     Converter().mainloop()
