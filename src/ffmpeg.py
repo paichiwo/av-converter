@@ -38,7 +38,10 @@ class FFMpeg:
 
     def use_ffmpeg(self, input_file_path, output_file_path, video_codec, progress_callback=None):
         """Use ffmpeg for conversion"""
-        ffmpeg_command = [self.exe_path, '-i', input_file_path, '-c:v', video_codec, '-y', output_file_path]
+        ffmpeg_command = [self.exe_path,
+                          '-i', input_file_path,
+                          '-c:v', video_codec,
+                          '-y', output_file_path]
 
         process = Popen(args=ffmpeg_command, stdout=PIPE, stderr=PIPE, stdin=PIPE,
                         creationflags=CREATE_NO_WINDOW, universal_newlines=True)
