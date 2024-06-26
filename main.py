@@ -114,7 +114,7 @@ class Converter(CTk):
                 self.info_lbl.configure(text='This format is not allowed')
 
     def settings_btn_action(self):
-        print('settings button clicked')
+        self.info_lbl.configure(text='settings button clicked')
 
     def browse_btn_action(self):
         files = filedialog.askopenfilenames()
@@ -145,6 +145,7 @@ class Converter(CTk):
                     self.info_lbl.configure(text='No ffmpeg.exe found')
 
         threading.Thread(target=convert).start()
+
 
 if __name__ == '__main__':
     Converter().mainloop()
