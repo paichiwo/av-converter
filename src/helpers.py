@@ -54,3 +54,9 @@ def save_settings(data, file_name):
 def open_downloads_folder():
     """Open target folder"""
     startfile(load_settings())
+
+
+def load_codecs_from_json():
+    with open('./data/codecs.json', 'r') as file:
+        codecs = json.load(file)
+    return codecs
