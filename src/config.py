@@ -35,5 +35,6 @@ OUTPUT_FORMATS = [
     '.wav',
     '.aac',
     '.aiff',
-    '.m4a'
+    '.m4a',
+    '.mkv'
 ]
