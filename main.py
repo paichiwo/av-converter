@@ -6,7 +6,7 @@ from customtkinter import CTk, CTkFrame, CTkLabel, CTkOptionMenu, CTkButton, CTk
 from CTkMessagebox import CTkMessagebox
 from CTkListbox import CTkListbox
 from src.CTkScrollableDropdown import *
-from src.config import IMG_PATHS, VERSION, OUTPUT_FORMATS
+from src.config import IMG_PATHS, VERSION, OUTPUT_FORMATS, D, N
 from src.helpers import center_window, imager, load_codecs_from_json
 from src.ffmpeg import FFMpeg
 
@@ -129,9 +129,13 @@ class Converter(CTk):
     def convert_btn_action(self):
         def progress_call(percentage):
             self.progress_bar.set(round(percentage/100, 3))
+            self.convert_btn.configure(state=D)
+            self.info_lbl.configure(text='Converting files, please wait...')
+
             if self.progress_bar.get() == 1:
                 self.progress_bar.set(0)
                 self.info_lbl.configure(text='Conversion complete')
+                self.convert_btn.configure(state=N)
 
         def convert():
             extension = self.dropdown_menu.get()
@@ -143,8 +147,12 @@ class Converter(CTk):
                     self.ffmpeg.use_ffmpeg(input_file, output_file, codec, progress_call)
                 except FileNotFoundError:
                     self.info_lbl.configure(text='No ffmpeg.exe found')
+                    self.convert_btn.configure(state=N)
 
-        Thread(target=convert).start()
+        if self.files_to_convert:
+            Thread(target=convert).start()
+        else:
+            self.info_lbl.configure(text='Nothing to convert')
 
 
 if __name__ == '__main__':
