@@ -7,8 +7,9 @@ from CTkMessagebox import CTkMessagebox
 from CTkListbox import CTkListbox
 from src.CTkScrollableDropdown import *
 from src.config import IMG_PATHS, VERSION, OUTPUT_FORMATS, D, N
-from src.helpers import center_window, imager, load_codecs_from_json
+from src.helpers import center_window, imager, load_codecs_from_json, load_settings
 from src.ffmpeg import FFMpeg
+from src.other_windows import SettingsWindow
 
 
 class Converter(CTk):
@@ -22,6 +23,7 @@ class Converter(CTk):
 
         self.files_to_convert = []
         self.codecs = load_codecs_from_json()
+        self.settings_window = None
 
         # GUI
         self.top_frame = CTkFrame(self, fg_color='transparent')
@@ -114,7 +116,10 @@ class Converter(CTk):
                 self.info_lbl.configure(text='This format is not allowed')
 
     def settings_btn_action(self):
-        self.info_lbl.configure(text='settings button clicked')
+        if self.settings_window is None or not self.settings_window.winfo_exists():
+            self.settings_window = SettingsWindow(self)
+        else:
+            self.settings_window.focus()
 
     def browse_btn_action(self):
         files = filedialog.askopenfilenames()
@@ -127,6 +132,8 @@ class Converter(CTk):
         self.filelist.delete(0, 'end')
 
     def convert_btn_action(self):
+        output_folder = load_settings()
+
         def progress_call(percentage):
             self.progress_bar.set(round(percentage/100, 3))
             self.convert_btn.configure(state=D)
@@ -139,12 +146,12 @@ class Converter(CTk):
 
         def convert():
             extension = self.dropdown_menu.get()
-            for input_file in self.files_to_convert:
-                name, ext = os.path.splitext(input_file)
-                output_file = name + extension
+            for input_path in self.files_to_convert:
+                name, ext = os.path.splitext(input_path)
+                output_path = os.path.join(output_folder, f'{name}{extension}'.split('/')[-1])
                 codec = self.codecs[extension]
                 try:
-                    self.ffmpeg.use_ffmpeg(input_file, output_file, codec, progress_call)
+                    self.ffmpeg.use_ffmpeg(input_path, output_path, codec, progress_call)
                 except FileNotFoundError:
                     self.info_lbl.configure(text='No ffmpeg.exe found')
                     self.convert_btn.configure(state=N)
