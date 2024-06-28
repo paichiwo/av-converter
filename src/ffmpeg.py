@@ -41,7 +41,7 @@ class FFMpeg:
 
         duration = self.extract_duration(process.stderr)
 
-        progress_thread = Thread(target=self.track_progress, args=(process.stderr, duration, progress_callback)).start()
+        Thread(target=self.track_progress, args=(process.stderr, duration, progress_callback)).start()
 
     @staticmethod
     def extract_duration(ffmpeg_output):

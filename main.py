@@ -1,5 +1,5 @@
 import os.path
-import threading
+from threading import Thread
 from tkinterdnd2 import *
 from tkinter import filedialog
 from customtkinter import CTk, CTkFrame, CTkLabel, CTkOptionMenu, CTkButton, CTkProgressBar, StringVar, DoubleVar
@@ -128,23 +128,23 @@ class Converter(CTk):
 
     def convert_btn_action(self):
         def progress_call(percentage):
-            self.progress_bar.set(percentage/100)
+            self.progress_bar.set(round(percentage/100, 3))
+            if self.progress_bar.get() == 1:
+                self.progress_bar.set(0)
+                self.info_lbl.configure(text='Conversion complete')
 
         def convert():
-            self.progress_bar.set(0)
             extension = self.dropdown_menu.get()
             for input_file in self.files_to_convert:
                 name, ext = os.path.splitext(input_file)
-
                 output_file = name + extension
                 codec = self.codecs[extension]
-
                 try:
                     self.ffmpeg.use_ffmpeg(input_file, output_file, codec, progress_call)
                 except FileNotFoundError:
                     self.info_lbl.configure(text='No ffmpeg.exe found')
 
-        threading.Thread(target=convert).start()
+        Thread(target=convert).start()
 
 
 if __name__ == '__main__':
