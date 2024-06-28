@@ -10,6 +10,7 @@ from src.config import IMG_PATHS, VERSION, OUTPUT_FORMATS, D, N
 from src.helpers import center_window, imager, load_codecs_from_json, load_settings
 from src.ffmpeg import FFMpeg
 from src.other_windows import SettingsWindow
+from src.popup_menu import CTkPopupMenu
 
 
 class Converter(CTk):
@@ -57,6 +58,15 @@ class Converter(CTk):
 
         # PLUS LABEL
         self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
+
+        # RIGHT CLICK MENU FOR FILELIST
+        self.right_click_menu = CTkPopupMenu(master=self, width=80, height=50, corner_radius=8, border_width=1)
+        self.filelist.bind('<Button-3>', lambda event: self.right_click_menu.popup(event), add='+')
+        # self.mid_frame.bind('<Button-3>', lambda event: self.right_click_menu.popup(event), add='+')
+        self.delete_btn = CTkButton(self.right_click_menu.frame, text='Delete', command=self.delete_entry,
+                                    text_color=('black', 'white'), hover_color=('grey90', 'grey25'),
+                                    compound='left', anchor='w', fg_color='transparent', corner_radius=5)
+        self.delete_btn.pack(expand=True, fill='x', padx=10, pady=0)
 
         # initialize
         self.ffmpeg = FFMpeg(self)
@@ -160,6 +170,10 @@ class Converter(CTk):
             Thread(target=convert).start()
         else:
             self.info_lbl.configure(text='Nothing to convert')
+
+    def delete_entry(self):
+        selected_indices = self.filelist.curselection()
+        print(selected_indices)
 
 
 if __name__ == '__main__':
