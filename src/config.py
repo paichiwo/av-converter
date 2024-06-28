@@ -38,3 +38,6 @@ OUTPUT_FORMATS = [
     '.m4a',
     '.mkv'
 ]
+
+D = 'disabled'
+N = 'normal'
