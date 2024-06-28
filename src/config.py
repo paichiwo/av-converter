@@ -41,3 +41,20 @@ OUTPUT_FORMATS = [
 
 D = 'disabled'
 N = 'normal'
+
+
+GITHUB_URL = "https://github.com/paichiwo/"
+
+SETTINGS_HEADER = f"""
+AV - CONVERTER v{VERSION}
+Paichiwo
+2023
+"""
+
+SETTINGS_MSG = """
+This is simple to use audio-video converter application written in Python.
+FFmpeg comes with the app, no need to have it installed.
+
+Convert audio files such as MP3, WAV, AAC, FLAC, etc. between audio formats.
+Convert video files such as MP4, AVI, MKV, MOV, etc. to other video or audio.
+"""
