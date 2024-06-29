@@ -3,14 +3,16 @@ from src.popup_menu import CTkPopupMenu
 
 
 class ListBox(CTkScrollableFrame):
-    def __init__(self, master, data=None, *args, **kwargs):
+    def __init__(self, master, data=None, info_lbl=None, *args, **kwargs):
         super().__init__(master, *args, **kwargs)
 
         self.master = master
         self.data = data if data is not None else []
         self.frames = []
         self.selected_frame = None
+        self.info_lbl = info_lbl
 
+        self.configure(fg_color='grey17', scrollbar_button_color='grey17', scrollbar_button_hover_color='grey17')
         self.create_frames()
         self.draw_frames()
         self.update_frame_indices()
@@ -44,11 +46,14 @@ class ListBox(CTkScrollableFrame):
         if frame_index < len(self.data):
             del self.data[frame_index]
         self.update_frame_indices()
+        self.info_lbl.configure(text=f'{self.data[frame_index].split('/')[-1]} - deleted')
 
     def delete_selected_frame(self):
-        if self.selected_frame:
+        if self.selected_frame is not None:
             self.delete_frame(self.selected_frame)
             self.selected_frame = None
+        else:
+            self.info_lbl.configure(text='Nothing selected')
 
     def update_frame_indices(self):
         for i, frame in enumerate(self.frames):
@@ -69,7 +74,6 @@ class SingleFrame(CTkFrame):
         self.master = master
         self.data = data
         self.index = 0
-        self.deleted = False
         self.left_click_callback = left_click_callback
         self.delete_callback = delete_callback
 
@@ -105,5 +109,4 @@ class SingleFrame(CTkFrame):
             self.delete_callback()
 
     def delete(self):
-        self.pack_forget()
-        self.deleted = True
+        self.destroy()
