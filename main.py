@@ -31,12 +31,14 @@ class Converter(CTk):
         self.prg_frame = CTkFrame(self)
         self.nfo_frame = CTkFrame(self, corner_radius=0)
 
+        # NFO FRAME
+        self.info_lbl = CTkLabel(self.nfo_frame, text='')
+
         # TOP FRAME
         self.settings_btn = CTkButton(self.top_frame, image=imager(IMG_PATHS['settings'], 20, 20),
                                       text='', width=40, fg_color='transparent', command=self.settings_btn_action)
         # MID FRAME
-        self.filelist = ListBox(self.mid_frame, self.files_to_convert, fg_color='grey17', corner_radius=10,
-                                scrollbar_button_color='grey16', scrollbar_button_hover_color='grey19')
+        self.filelist = ListBox(self.mid_frame, self.files_to_convert, self.info_lbl, corner_radius=10)
         # BTM FRAME
         self.dropdown_menu = CTkOptionMenu(self.btm_frame)
         self.dropdown_menu.set('.mp3')
@@ -49,9 +51,6 @@ class Converter(CTk):
         # PRG FRAME
         self.progress_bar = CTkProgressBar(self.prg_frame, height=2)
         self.progress_bar.set(0)
-
-        # NFO FRAME
-        self.info_lbl = CTkLabel(self.nfo_frame, text='initial test')
 
         # PLUS LABEL
         self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
@@ -105,7 +104,7 @@ class Converter(CTk):
     def get_filelist(self, input_array, output_array):
         new_files = [file for file in input_array if file.endswith(tuple(OUTPUT_FORMATS)) and file not in output_array]
 
-        if not new_files:
+        if not new_files and input_array == []:
             self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
             self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
             self.info_lbl.configure(text='This format is not allowed or file already added')
@@ -133,6 +132,7 @@ class Converter(CTk):
     def clear_btn_action(self):
         self.files_to_convert.clear()
         self.filelist.delete()
+        self.info_lbl.configure(text='')
 
     def convert_btn_action(self):
         output_folder = load_settings()
