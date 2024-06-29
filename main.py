@@ -2,15 +2,13 @@ import os.path
 from threading import Thread
 from tkinterdnd2 import *
 from tkinter import filedialog
-from customtkinter import CTk, CTkFrame, CTkLabel, CTkOptionMenu, CTkButton, CTkProgressBar, StringVar, DoubleVar
-from CTkMessagebox import CTkMessagebox
-from CTkListbox import CTkListbox
+from customtkinter import CTk, CTkFrame, CTkLabel, CTkOptionMenu, CTkButton, CTkProgressBar
 from src.CTkScrollableDropdown import *
 from src.config import IMG_PATHS, VERSION, OUTPUT_FORMATS, D, N
 from src.helpers import center_window, imager, load_codecs_from_json, load_settings
 from src.ffmpeg import FFMpeg
 from src.other_windows import SettingsWindow
-from src.popup_menu import CTkPopupMenu
+from src.listbox import ListBox
 
 
 class Converter(CTk):
@@ -33,19 +31,20 @@ class Converter(CTk):
         self.prg_frame = CTkFrame(self)
         self.nfo_frame = CTkFrame(self, corner_radius=0)
 
+        # NFO FRAME
+        self.info_lbl = CTkLabel(self.nfo_frame, text='')
+
         # TOP FRAME
         self.settings_btn = CTkButton(self.top_frame, image=imager(IMG_PATHS['settings'], 20, 20),
                                       text='', width=40, fg_color='transparent', command=self.settings_btn_action)
         # MID FRAME
-        self.filelist = CTkListbox(self.mid_frame, border_width=0, corner_radius=10, scrollbar_button_color='grey17',
-                                   scrollbar_button_hover_color='grey17')
-
+        self.filelist = ListBox(self.mid_frame, self.files_to_convert, self.info_lbl, corner_radius=10)
         # BTM FRAME
-        self.dropdown_menu = CTkOptionMenu(self.btm_frame)
+        self.dropdown_menu = CTkOptionMenu(self.btm_frame, justify='center')
         self.dropdown_menu.set('.mp3')
-        CTkScrollableDropdown(self.dropdown_menu, values=sorted(OUTPUT_FORMATS), frame_border_width=1)
+        CTkScrollableDropdown(self.dropdown_menu, values=sorted(OUTPUT_FORMATS), frame_border_width=1, justify='center')
 
-        self.browse_btn = CTkButton(self.btm_frame, text='BROWSE', command=self.browse_btn_action)
+        self.browse_btn = CTkButton(self.btm_frame, text='ADD', command=self.browse_btn_action)
         self.clear_btn = CTkButton(self.btm_frame, text='CLEAR', command=self.clear_btn_action)
         self.convert_btn = CTkButton(self.btm_frame, text='CONVERT', command=self.convert_btn_action)
 
@@ -53,20 +52,8 @@ class Converter(CTk):
         self.progress_bar = CTkProgressBar(self.prg_frame, height=2)
         self.progress_bar.set(0)
 
-        # NFO FRAME
-        self.info_lbl = CTkLabel(self.nfo_frame, text='initial test')
-
         # PLUS LABEL
         self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
-
-        # RIGHT CLICK MENU FOR FILELIST
-        self.right_click_menu = CTkPopupMenu(master=self, width=80, height=50, corner_radius=8, border_width=1)
-        self.filelist.bind('<Button-3>', lambda event: self.right_click_menu.popup(event), add='+')
-        # self.mid_frame.bind('<Button-3>', lambda event: self.right_click_menu.popup(event), add='+')
-        self.delete_btn = CTkButton(self.right_click_menu.frame, text='Delete', command=self.delete_entry,
-                                    text_color=('black', 'white'), hover_color=('grey90', 'grey25'),
-                                    compound='left', anchor='w', fg_color='transparent', corner_radius=5)
-        self.delete_btn.pack(expand=True, fill='x', padx=10, pady=0)
 
         # initialize
         self.ffmpeg = FFMpeg(self)
@@ -115,15 +102,20 @@ class Converter(CTk):
             self.get_filelist(input_array=self.filelist.tk.splitlist(event.data), output_array=self.files_to_convert)
 
     def get_filelist(self, input_array, output_array):
-        for file in input_array:
-            if file.endswith(tuple(OUTPUT_FORMATS)):
-                output_array.append(file)
-                self.filelist.insert('end', file.split('/')[-1])
-                self.info_lbl.configure(text='')
-            else:
-                self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
-                self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
-                self.info_lbl.configure(text='This format is not allowed')
+        new_files = [file for file in input_array if file.endswith(tuple(OUTPUT_FORMATS)) and file not in output_array]
+
+        if not new_files and input_array == []:
+            self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
+            self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
+            self.info_lbl.configure(text='This format is not allowed or file already added')
+            return
+
+        output_array.extend(new_files)
+        self.filelist.data = output_array
+        self.filelist.delete()
+        self.filelist.create_frames()
+        self.filelist.draw_frames()
+        self.info_lbl.configure(text='')
 
     def settings_btn_action(self):
         if self.settings_window is None or not self.settings_window.winfo_exists():
@@ -139,7 +131,8 @@ class Converter(CTk):
 
     def clear_btn_action(self):
         self.files_to_convert.clear()
-        self.filelist.delete(0, 'end')
+        self.filelist.delete()
+        self.info_lbl.configure(text='')
 
     def convert_btn_action(self):
         output_folder = load_settings()
@@ -156,6 +149,8 @@ class Converter(CTk):
 
         def convert():
             extension = self.dropdown_menu.get()
+            self.files_to_convert = self.filelist.data
+            print(self.files_to_convert)
             for input_path in self.files_to_convert:
                 name, ext = os.path.splitext(input_path)
                 output_path = os.path.join(output_folder, f'{name}{extension}'.split('/')[-1])
@@ -170,10 +165,6 @@ class Converter(CTk):
             Thread(target=convert).start()
         else:
             self.info_lbl.configure(text='Nothing to convert')
-
-    def delete_entry(self):
-        selected_indices = self.filelist.curselection()
-        print(selected_indices)
 
 
 if __name__ == '__main__':
