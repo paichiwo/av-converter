@@ -2,7 +2,7 @@ import json
 from os import environ, path, makedirs, startfile
 from customtkinter import CTkImage
 from PIL import Image
-
+from src.resource_path import resource_path
 
 def center_window(window, width, height):
     """Create a window in the center of the screen, using desired dimensions"""
@@ -57,6 +57,6 @@ def open_downloads_folder():
 
 
 def load_codecs_from_json():
-    with open('./data/codecs.json', 'r') as file:
+    with open(resource_path('data/codecs.json'), 'r') as file:
         codecs = json.load(file)
     return codecs
