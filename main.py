@@ -38,7 +38,7 @@ class Converter(CTk):
         self.settings_btn = CTkButton(self.top_frame, image=imager(IMG_PATHS['settings'], 20, 20),
                                       text='', width=40, fg_color='transparent', command=self.settings_btn_action)
         # MID FRAME
-        self.filelist = ListBox(self.mid_frame, self.files_to_convert, self.info_lbl, corner_radius=10)
+        self.listbox = ListBox(self.mid_frame, self.files_to_convert, self.info_lbl, corner_radius=10)
         # BTM FRAME
         self.dropdown_menu = CTkOptionMenu(self.btm_frame, justify='center')
         self.dropdown_menu.set('.mp3')
@@ -67,7 +67,7 @@ class Converter(CTk):
 
         self.mid_frame.pack(fill='both', expand=True, padx=40, pady=10)
         self.mid_frame.columnconfigure(0, weight=1)
-        self.filelist.pack(fill='both', expand=True, padx=10, pady=10)
+        self.listbox.pack(fill='both', expand=True, padx=10, pady=10)
 
         self.btm_frame.pack(fill='x', padx=40, pady=(0, 20))
         self.btm_frame.rowconfigure(0, weight=10)
@@ -90,16 +90,16 @@ class Converter(CTk):
         self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
 
     def enable_drag_and_drop(self):
-        widgets = [self.mid_frame, self.filelist, self.plus_lbl]
+        widgets = [self.mid_frame, self.listbox, self.plus_lbl]
 
         for widget in widgets:
             widget.drop_target_register(DND_FILES)
             widget.dnd_bind('<<Drop>>', self.drop_action)
 
     def drop_action(self, event):
-        if event.data and (event.widget in (self.mid_frame, self.filelist, self.plus_lbl)):
+        if event.data and (event.widget in (self.mid_frame, self.listbox, self.plus_lbl)):
             self.plus_lbl.destroy()
-            self.get_filelist(input_array=self.filelist.tk.splitlist(event.data), output_array=self.files_to_convert)
+            self.get_filelist(input_array=self.listbox.tk.splitlist(event.data), output_array=self.files_to_convert)
 
     def get_filelist(self, input_array, output_array):
         new_files = [file for file in input_array if file.endswith(tuple(OUTPUT_FORMATS)) and file not in output_array]
@@ -111,11 +111,11 @@ class Converter(CTk):
             return
 
         output_array.extend(new_files)
-        self.filelist.data = output_array
-        self.filelist.delete()
-        self.filelist.create_frames()
-        self.filelist.draw_frames()
-        self.filelist.update_frame_indices()
+        self.listbox.data = output_array
+        self.listbox.delete()
+        self.listbox.create_frames()
+        self.listbox.draw_frames()
+        self.listbox.update_frame_indices()
         self.info_lbl.configure(text='')
 
     def settings_btn_action(self):
@@ -128,11 +128,11 @@ class Converter(CTk):
         files = filedialog.askopenfilenames()
         if files:
             self.plus_lbl.destroy()
-            self.get_filelist(input_array=self.filelist.tk.splitlist(files), output_array=self.files_to_convert)
+            self.get_filelist(input_array=self.listbox.tk.splitlist(files), output_array=self.files_to_convert)
 
     def clear_btn_action(self):
         self.files_to_convert.clear()
-        self.filelist.delete()
+        self.listbox.delete()
         self.info_lbl.configure(text='')
 
     def convert_btn_action(self):
@@ -150,7 +150,7 @@ class Converter(CTk):
 
         def convert():
             extension = self.dropdown_menu.get()
-            self.files_to_convert = self.filelist.data
+            self.files_to_convert = self.listbox.data
             print(self.files_to_convert)
             for input_path in self.files_to_convert:
                 name, ext = os.path.splitext(input_path)
