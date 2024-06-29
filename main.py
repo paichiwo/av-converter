@@ -1,3 +1,4 @@
+import sys
 import os.path
 from threading import Thread
 from tkinterdnd2 import *
@@ -9,6 +10,10 @@ from src.helpers import center_window, imager, load_codecs_from_json, load_setti
 from src.ffmpeg import FFMpeg
 from src.other_windows import SettingsWindow
 from src.listbox import ListBox
+
+
+if getattr(sys, 'frozen', False):
+    import pyi_splash
 
 
 class Converter(CTk):
@@ -166,6 +171,9 @@ class Converter(CTk):
             Thread(target=convert).start()
         else:
             self.info_lbl.configure(text='Nothing to convert')
+
+    if getattr(sys, 'frozen', False):
+        pyi_splash.close()
 
 
 if __name__ == '__main__':
