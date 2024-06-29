@@ -11,6 +11,7 @@ from src.helpers import center_window, imager, load_codecs_from_json, load_setti
 from src.ffmpeg import FFMpeg
 from src.other_windows import SettingsWindow
 from src.popup_menu import CTkPopupMenu
+from src.listbox import ListBox
 
 
 class Converter(CTk):
@@ -37,8 +38,8 @@ class Converter(CTk):
         self.settings_btn = CTkButton(self.top_frame, image=imager(IMG_PATHS['settings'], 20, 20),
                                       text='', width=40, fg_color='transparent', command=self.settings_btn_action)
         # MID FRAME
-        self.filelist = CTkListbox(self.mid_frame, border_width=0, corner_radius=10, scrollbar_button_color='grey17',
-                                   scrollbar_button_hover_color='grey17')
+        self.filelist = ListBox(self.mid_frame, self.files_to_convert, fg_color='grey17', corner_radius=10,
+                                scrollbar_button_color='grey16', scrollbar_button_hover_color='grey19')
 
         # BTM FRAME
         self.dropdown_menu = CTkOptionMenu(self.btm_frame)
@@ -117,13 +118,16 @@ class Converter(CTk):
     def get_filelist(self, input_array, output_array):
         for file in input_array:
             if file.endswith(tuple(OUTPUT_FORMATS)):
-                output_array.append(file)
-                self.filelist.insert('end', file.split('/')[-1])
-                self.info_lbl.configure(text='')
+                output_array.append(file.split('/')[-1])
             else:
                 self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
                 self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
                 self.info_lbl.configure(text='This format is not allowed')
+
+        self.filelist.data = output_array
+        self.filelist.create_frames()
+        self.filelist.draw_frames()
+        self.info_lbl.configure(text='')
 
     def settings_btn_action(self):
         if self.settings_window is None or not self.settings_window.winfo_exists():
@@ -139,7 +143,7 @@ class Converter(CTk):
 
     def clear_btn_action(self):
         self.files_to_convert.clear()
-        self.filelist.delete(0, 'end')
+        self.filelist.delete()
 
     def convert_btn_action(self):
         output_folder = load_settings()
