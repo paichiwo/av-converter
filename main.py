@@ -115,6 +115,7 @@ class Converter(CTk):
         self.filelist.delete()
         self.filelist.create_frames()
         self.filelist.draw_frames()
+        self.filelist.update_frame_indices()
         self.info_lbl.configure(text='')
 
     def settings_btn_action(self):
