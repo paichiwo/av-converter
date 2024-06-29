@@ -31,8 +31,11 @@ class ListBox(CTkScrollableFrame):
         self.frames.clear()
 
     def delete_frame(self, frame):
+        frame_index = frame.index
         frame.delete()
         self.frames.remove(frame)
+        if frame_index < len(self.data):
+            del self.data[frame_index]
         self.update_frame_indices()
 
     def delete_selected_frame(self):
@@ -63,7 +66,7 @@ class SingleFrame(CTkFrame):
         self.left_click_callback = left_click_callback
         self.delete_callback = delete_callback
 
-        self.title_lbl = CTkLabel(master=self, text=self.data)
+        self.title_lbl = CTkLabel(master=self, text=self.data.split('/')[-1])
 
         self.right_click_menu = CTkPopupMenu(master=self, width=80, height=50, corner_radius=8, border_width=1)
         self.right_click_delete_btn = CTkButton(self.right_click_menu.frame, text='Delete', command=self.on_delete_click,

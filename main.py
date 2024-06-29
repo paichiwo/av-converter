@@ -60,15 +60,6 @@ class Converter(CTk):
         # PLUS LABEL
         self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
 
-        # RIGHT CLICK MENU FOR FILELIST
-        self.right_click_menu = CTkPopupMenu(master=self, width=80, height=50, corner_radius=8, border_width=1)
-        self.filelist.bind('<Button-3>', lambda event: self.right_click_menu.popup(event), add='+')
-        # self.mid_frame.bind('<Button-3>', lambda event: self.right_click_menu.popup(event), add='+')
-        self.delete_btn = CTkButton(self.right_click_menu.frame, text='Delete', command=self.delete_entry,
-                                    text_color=('black', 'white'), hover_color=('grey90', 'grey25'),
-                                    compound='left', anchor='w', fg_color='transparent', corner_radius=5)
-        self.delete_btn.pack(expand=True, fill='x', padx=10, pady=0)
-
         # initialize
         self.ffmpeg = FFMpeg(self)
         self.enable_drag_and_drop()
@@ -116,15 +107,17 @@ class Converter(CTk):
             self.get_filelist(input_array=self.filelist.tk.splitlist(event.data), output_array=self.files_to_convert)
 
     def get_filelist(self, input_array, output_array):
-        for file in input_array:
-            if file.endswith(tuple(OUTPUT_FORMATS)):
-                output_array.append(file.split('/')[-1])
-            else:
-                self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
-                self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
-                self.info_lbl.configure(text='This format is not allowed')
+        new_files = [file for file in input_array if file.endswith(tuple(OUTPUT_FORMATS)) and file not in output_array]
 
+        if not new_files:
+            self.plus_lbl = CTkLabel(self.mid_frame, image=imager(IMG_PATHS['plus_large'], 64, 64), text='')
+            self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
+            self.info_lbl.configure(text='This format is not allowed or file already added')
+            return
+
+        output_array.extend(new_files)
         self.filelist.data = output_array
+        self.filelist.delete()
         self.filelist.create_frames()
         self.filelist.draw_frames()
         self.info_lbl.configure(text='')
@@ -160,6 +153,8 @@ class Converter(CTk):
 
         def convert():
             extension = self.dropdown_menu.get()
+            self.files_to_convert = self.filelist.data
+            print(self.files_to_convert)
             for input_path in self.files_to_convert:
                 name, ext = os.path.splitext(input_path)
                 output_path = os.path.join(output_folder, f'{name}{extension}'.split('/')[-1])
@@ -174,10 +169,6 @@ class Converter(CTk):
             Thread(target=convert).start()
         else:
             self.info_lbl.configure(text='Nothing to convert')
-
-    def delete_entry(self):
-        selected_indices = self.filelist.curselection()
-        print(selected_indices)
 
 
 if __name__ == '__main__':
