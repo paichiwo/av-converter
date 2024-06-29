@@ -40,11 +40,11 @@ class Converter(CTk):
         # MID FRAME
         self.filelist = ListBox(self.mid_frame, self.files_to_convert, self.info_lbl, corner_radius=10)
         # BTM FRAME
-        self.dropdown_menu = CTkOptionMenu(self.btm_frame)
+        self.dropdown_menu = CTkOptionMenu(self.btm_frame, justify='center')
         self.dropdown_menu.set('.mp3')
-        CTkScrollableDropdown(self.dropdown_menu, values=sorted(OUTPUT_FORMATS), frame_border_width=1)
+        CTkScrollableDropdown(self.dropdown_menu, values=sorted(OUTPUT_FORMATS), frame_border_width=1, justify='center')
 
-        self.browse_btn = CTkButton(self.btm_frame, text='BROWSE', command=self.browse_btn_action)
+        self.browse_btn = CTkButton(self.btm_frame, text='ADD', command=self.browse_btn_action)
         self.clear_btn = CTkButton(self.btm_frame, text='CLEAR', command=self.clear_btn_action)
         self.convert_btn = CTkButton(self.btm_frame, text='CONVERT', command=self.convert_btn_action)
 
