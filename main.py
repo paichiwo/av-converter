@@ -2,15 +2,12 @@ import os.path
 from threading import Thread
 from tkinterdnd2 import *
 from tkinter import filedialog
-from customtkinter import CTk, CTkFrame, CTkLabel, CTkOptionMenu, CTkButton, CTkProgressBar, StringVar, DoubleVar
-from CTkMessagebox import CTkMessagebox
-from CTkListbox import CTkListbox
+from customtkinter import CTk, CTkFrame, CTkLabel, CTkOptionMenu, CTkButton, CTkProgressBar
 from src.CTkScrollableDropdown import *
 from src.config import IMG_PATHS, VERSION, OUTPUT_FORMATS, D, N
 from src.helpers import center_window, imager, load_codecs_from_json, load_settings
 from src.ffmpeg import FFMpeg
 from src.other_windows import SettingsWindow
-from src.popup_menu import CTkPopupMenu
 from src.listbox import ListBox
 
 
@@ -40,7 +37,6 @@ class Converter(CTk):
         # MID FRAME
         self.filelist = ListBox(self.mid_frame, self.files_to_convert, fg_color='grey17', corner_radius=10,
                                 scrollbar_button_color='grey16', scrollbar_button_hover_color='grey19')
-
         # BTM FRAME
         self.dropdown_menu = CTkOptionMenu(self.btm_frame)
         self.dropdown_menu.set('.mp3')

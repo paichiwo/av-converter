@@ -14,6 +14,13 @@ class ListBox(CTkScrollableFrame):
         self.create_frames()
         self.draw_frames()
         self.update_frame_indices()
+        self.bind_scroll_events()
+
+    def bind_scroll_events(self):
+        self.bind_all('<MouseWheel>', self._on_mousewheel)
+
+    def _on_mousewheel(self, event):
+        self._parent_canvas.yview_scroll(-1 * (int(event.delta / 120) * 16), 'units')
 
     def create_frames(self):
         for entry in self.data:
@@ -81,10 +88,10 @@ class SingleFrame(CTkFrame):
         self.title_lbl.pack(anchor='center', side='left', padx=10)
 
     def bind_keys(self):
-        self.bind("<Button-1>", self.on_left_click)
-        self.title_lbl.bind("<Button-1>", self.on_left_click)
-        self.bind("<Button-3>", self.on_right_click)
-        self.title_lbl.bind("<Button-3>", self.on_right_click)
+        self.bind('<Button-1>', self.on_left_click)
+        self.title_lbl.bind('<Button-1>', self.on_left_click)
+        self.bind('<Button-3>', self.on_right_click)
+        self.title_lbl.bind('<Button-3>', self.on_right_click)
 
     def on_left_click(self, event):
         if self.left_click_callback:
