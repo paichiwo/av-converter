@@ -80,9 +80,10 @@ class SingleFrame(CTkFrame):
         self.title_lbl = CTkLabel(master=self, text=self.data.split('/')[-1])
 
         self.right_click_menu = CTkPopupMenu(master=self, width=80, height=50, corner_radius=8, border_width=1)
-        self.right_click_delete_btn = CTkButton(self.right_click_menu.frame, text='Delete', command=self.on_delete_click,
-                                                text_color=('black', 'white'), hover_color=('grey90', 'grey25'),
-                                                compound='left', anchor='w', fg_color='transparent', corner_radius=5)
+        self.right_click_delete_btn = CTkButton(master=self.right_click_menu.frame, text='Delete',
+                                                command=self.on_delete_click, text_color=('black', 'white'),
+                                                hover_color=('grey90', 'grey25'), compound='left', anchor='w',
+                                                fg_color='transparent', corner_radius=5)
         self.right_click_delete_btn.pack(expand=True, fill='x', padx=10, pady=0)
 
         self.draw()
