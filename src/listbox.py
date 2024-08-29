@@ -43,10 +43,9 @@ class ListBox(CTkScrollableFrame):
         frame_index = frame.index
         frame.delete()
         self.frames.remove(frame)
+        self.info_lbl.configure(text=f'{self.data[frame_index].split('/')[-1]} - deleted')
         if frame_index < len(self.data):
             del self.data[frame_index]
-        self.update_frame_indices()
-        self.info_lbl.configure(text=f'{self.data[frame_index].split('/')[-1]} - deleted')
 
     def delete_selected_frame(self):
         if self.selected_frame is not None:
