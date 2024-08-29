@@ -59,7 +59,7 @@ class ListBox(CTkScrollableFrame):
             frame.index = i
 
     def on_frame_left_click(self, clicked_frame, event):
-        if self.selected_frame:
+        if self.selected_frame and event:
             self.selected_frame.configure(fg_color='grey17')
 
         self.selected_frame = clicked_frame

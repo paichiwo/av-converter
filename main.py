@@ -62,7 +62,7 @@ class Converter(CTk):
 
         # initialize
         self.ffmpeg = FFMpeg(self)
-        self.enable_drag_and_drop()
+        self.enable_drag_and_drop(widgets=[self.mid_frame, self.listbox, self.plus_lbl])
         self.draw_gui()
 
     def draw_gui(self):
@@ -94,8 +94,7 @@ class Converter(CTk):
 
         self.plus_lbl.place(relx=.5, rely=.5, anchor='center')
 
-    def enable_drag_and_drop(self):
-        widgets = [self.mid_frame, self.listbox, self.plus_lbl]
+    def enable_drag_and_drop(self, widgets):
 
         for widget in widgets:
             widget.drop_target_register(DND_FILES)
