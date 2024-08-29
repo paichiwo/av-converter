@@ -2,30 +2,13 @@
 
 AV-Converter is a Python application designed for converting audio/video files using ffmpeg. It provides a graphical user interface (GUI) for managing files, selecting output formats, and monitoring conversion progress.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Prerequisites](#prerequisites)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Features](#features)
-- [Contributing](#contributing)
-- [License](#license)
-
 ## Overview
 
 AV-Converter simplifies the process of converting audio/video files by leveraging ffmpeg. It allows users to add files for conversion, select from a variety of output formats, monitor progress via a progress bar, and configure settings through a dedicated window.
 
-## Prerequisites
-
-Before using AV-Converter, ensure you have the following installed:
-
-- Python 3.x
-- ffmpeg (Ensure it's accessible via PATH or provide the path in settings)
-
 ## Installation
 
-Grab the newest release here: [AV-Converter v1.3.0](https://github.com/paichiwo/av-converter/releases/tag/1.3)
+Grab the newest release here: [AV-Converter v1.3.1](https://github.com/paichiwo/av-converter/releases/tag/1.3)
 
 1. Clone the repository:
    ```

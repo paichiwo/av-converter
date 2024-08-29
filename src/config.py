@@ -1,6 +1,6 @@
 from src.resource_path import resource_path
 
-VERSION = '1.3.0'
+VERSION = '1.3.1'
 
 IMG_PATHS = {
     'icon': resource_path('images/audio-video_converter_icon_512x512.ico'),
