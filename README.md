@@ -10,10 +10,7 @@ AV-Converter simplifies the process of converting audio/video files by leveragin
 
 Grab the newest release here: [AV-Converter v1.3.1](https://github.com/paichiwo/av-converter/releases/tag/1.3)
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/your/repository.git
-   cd av-converter
+1. Clone the repository: `git clone https://github.com/your/repository.git`
 
 2. Install dependencies:
 `pip install -r requirements.txt`
@@ -31,7 +28,7 @@ Drag and drop files onto the application or use the "ADD" button to browse and a
 - Monitor progress through the progress bar and status updates.
 
 ## Settings
-Click the settings icon to configure output folder and other settings.
+Click the settings icon to configure the output folder and other settings.
 
 ## Features
 - Drag-and-drop: Add files by dragging them onto the application.
